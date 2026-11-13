@@ -3,7 +3,7 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, PlainTextResponse, Response
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, EmailStr, Field
 from supabase import Client, create_client
@@ -35,6 +35,32 @@ class Enquiry(BaseModel):
     service: str = Field(min_length=1, max_length=100)
     message: str = Field(min_length=1, max_length=2000)
 
+@app.get("/robots.txt")
+def robots():
+    content = """User-agent: *
+Allow: /
+
+Sitemap: https://mynexoverse.in/sitemap.xml
+"""
+    return PlainTextResponse(content)
+
+
+@app.get("/sitemap.xml")
+def sitemap():
+    content = """<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <url>
+        <loc>https://mynexoverse.in/</loc>
+    </url>
+    <url>
+        <loc>https://mynexoverse.in/demos/business/</loc>
+    </url>
+    <url>
+        <loc>https://mynexoverse.in/demos/ai-chatbot/</loc>
+    </url>
+</urlset>
+"""
+    return Response(content=content, media_type="application/xml")
 
 @app.get("/")
 def home():
