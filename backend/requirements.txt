@@ -1,0 +1,6 @@
+fastapi
+uvicorn[standard]
+supabase
+httpx[http2]
+python-dotenv
+email-validator
