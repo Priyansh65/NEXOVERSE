@@ -1,6 +1,5 @@
 import os
 from pathlib import Path
-from typing import Optional
 
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException
@@ -16,23 +15,18 @@ SUPABASE_URL = os.getenv("SUPABASE_URL")
 # Use a server-side Supabase secret/service-role key here, never the publishable/anon key.
 SUPABASE_KEY = os.getenv("SUPABASE_SECRET_KEY") or os.getenv("SUPABASE_SERVICE_ROLE_KEY")
 
-supabase: Optional[Client] = None
-
 if not SUPABASE_URL or not SUPABASE_KEY:
-    print(
-        "Supabase config missing: set SUPABASE_URL and SUPABASE_SECRET_KEY in the project root .env file. "
+    raise RuntimeError(
+        "Set SUPABASE_URL and SUPABASE_SECRET_KEY in the project root .env file. "
         "Use a Supabase secret key (sb_secret_...) or legacy service_role key."
     )
-else:
-    try:
-        supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
-    except Exception as exc:  # pragma: no cover - environment-based runtime failure path
-        print(f"Supabase client initialization failed: {exc}")
-        supabase = None
+
+supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 app = FastAPI(title="NEXOVERSE API")
 app.mount("/css", StaticFiles(directory=ROOT_DIR / "css"), name="css")
 app.mount("/js", StaticFiles(directory=ROOT_DIR / "js"), name="js")
+app.mount("/demos", StaticFiles(directory=ROOT_DIR / "demos", html=True), name="demos")
 
 
 class Enquiry(BaseModel):
@@ -49,15 +43,6 @@ def home():
 
 @app.post("/api/enquiries", status_code=201)
 def create_enquiry(enquiry: Enquiry):
-    if supabase is None:
-        raise HTTPException(
-            status_code=503,
-            detail=(
-                "The enquiry service is not configured. "
-                "Set a valid SUPABASE_URL and SUPABASE_SECRET_KEY in the project root .env file."
-            ),
-        )
-
     data = {
         "name": enquiry.name.strip(),
         "email": str(enquiry.email),

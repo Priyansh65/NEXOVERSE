@@ -138,3 +138,59 @@ button, input, textarea, select { font: inherit; }
   .footer-content, .copyright { flex-direction: column; align-items: flex-start; }
   .footer-links { gap: 14px; }
 }
+.demos-section {
+    padding: 90px 8%;
+    text-align: center;
+}
+
+.demos-section h2 {
+    font-size: 38px;
+    margin-bottom: 12px;
+}
+
+.demos-section > p {
+    opacity: 0.75;
+    margin-bottom: 40px;
+}
+
+.demo-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 25px;
+    max-width: 950px;
+    margin: auto;
+}
+
+.demo-card {
+    padding: 35px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 18px;
+    text-align: left;
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.demo-card h3 {
+    font-size: 24px;
+    margin-bottom: 12px;
+}
+
+.demo-card p {
+    opacity: 0.75;
+    margin-bottom: 25px;
+}
+
+.demo-card a {
+    display: inline-block;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+@media (max-width: 650px) {
+    .demo-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .demos-section h2 {
+        font-size: 30px;
+    }
+}
